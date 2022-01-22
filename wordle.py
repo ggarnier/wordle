@@ -10,6 +10,14 @@ DICTIONARY = []
 RIGHT_LETTER = "x"
 WRONG_POSITION = "o"
 WRONG_LETTER = "_"
+WORD_PATTERN = re.compile(rf"^[a-z]{{{WORD_LENGTH}}}$")
+
+
+def cleanup_word(line):
+    word = line.strip().lower()
+    if WORD_PATTERN.match(word):
+        return word
+    return ""
 
 
 def load_dictionary(filepath):
@@ -17,7 +25,7 @@ def load_dictionary(filepath):
     DICTIONARY = []
     with open(filepath) as f:
         while line := f.readline():
-            word = line.strip()
+            word = cleanup_word(line)
             if len(word) == WORD_LENGTH:
                 DICTIONARY.append(word.lower())
 
@@ -41,10 +49,9 @@ def test_word(chosen_word, guess):
 
 
 def get_word():
-    word_pattern = rf"^[a-z]{{{WORD_LENGTH}}}$"
     while True:
         word = input().lower()
-        if not re.match(word_pattern, word):
+        if not WORD_PATTERN.match(word):
             print(f"Word should have {WORD_LENGTH} letters")
         elif word not in DICTIONARY:
             print("Word not in dictionary")
