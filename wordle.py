@@ -1,3 +1,4 @@
+import argparse
 from random import randint
 import re
 import sys
@@ -11,14 +12,19 @@ WRONG_POSITION = "o"
 WRONG_LETTER = "_"
 
 
-def load_dictionary():
+def load_dictionary(filepath):
     global DICTIONARY
     DICTIONARY = []
-    with open("word-list.txt") as f:
+    with open(filepath) as f:
         while line := f.readline():
             word = line.strip()
             if len(word) == WORD_LENGTH:
                 DICTIONARY.append(word.lower())
+
+    if len(DICTIONARY) == 0:
+        print("Dictionary is empty")
+        sys.exit(1)
+    print(f"Dictionary contains {len(DICTIONARY)} words")
 
 
 def test_word(chosen_word, guess):
@@ -67,5 +73,8 @@ def run():
 
 
 if __name__ == "__main__":
-    load_dictionary()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--dictionary", required=True, help="path to the dictionary file")
+    args = parser.parse_args()
+    load_dictionary(args.dictionary)
     run()
